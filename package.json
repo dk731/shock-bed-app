@@ -10,8 +10,21 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@quasar/extras": "^1.16.13",
+    "@vueuse/core": "^11.3.0",
+    "@vueuse/nuxt": "^11.3.0",
     "nuxt": "^3.14.1592",
+    "nuxt-quasar-ui": "^2.1.7",
+    "quasar": "^2.17.4",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.276",
+    "@nuxt/eslint": "^0.7.2",
+    "@nuxt/icon": "^1.8.2",
+    "@nuxtjs/tailwindcss": "^6.12.2",
+    "@okee-tech/eslint-plugin-neverthrow": "^1.0.3",
+    "daisyui": "^4.12.14"
   }
 }
