@@ -36,6 +36,7 @@ pwm = gpiozero.PWMLED(
     frequency=shock_state.frequency,
     initial_value=0.0,
 )
+pwm.off()
 
 def update_pwm():
     pwm.frequency = shock_state.frequency
