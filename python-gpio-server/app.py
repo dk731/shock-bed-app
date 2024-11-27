@@ -2,11 +2,14 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dataclasses import dataclass
 import gpiozero
+from smbus2 import SMBus
 
 app = Flask(__name__)
 CORS(app)
 
 PWM_PIN = 4
+HW_EN_PIN = 17
+VOLTAGE_POT_ADDR = 0x2e
 
 
 @dataclass
@@ -36,6 +39,13 @@ pwm = gpiozero.PWMLED(
     frequency=shock_state.frequency,
     initial_value=0.0,
 )
+pwm.value = 0.0
+
+i2c = SMBus(1) # Pin 2, 3
+i2c.write_byte_data(VOLTAGE_POT_ADDR, 0x00, 127)
+
+hw_enable_pin = gpiozero.LED(HW_EN_PIN) # Pin 11
+hw_enable_pin.value = 0
 
 def update_pwm():
     pwm.frequency = shock_state.frequency
@@ -62,8 +72,19 @@ def api_data():
     if new_state.dutyCycle is not None:
         shock_state.dutyCycle = new_state.dutyCycle
 
-    if new_state.frequency or new_state.dutyCycle or new_state.state:
+    if (
+        new_state.frequency is not None
+        or new_state.dutyCycle is not None
+        or new_state.state is not None
+    ):
         update_pwm()
+
+    if new_state.state is not None:
+        new_voltage_value = int((1 - shock_state.voltage) * 127) & 127
+        i2c.write_byte_data(VOLTAGE_POT_ADDR, 0x00, new_voltage_value)
+
+    if new_state.state is not None:
+        hw_enable_pin.value = 1 if shock_state.state else 0
 
     return jsonify(shock_state)
 
