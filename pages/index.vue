@@ -8,9 +8,12 @@ type ShockState = {
 
 const shockState = ref<ShockState>({});
 const remoteState = useAsyncData(async () => {
-  const response = await fetch("http://localhost:8000/api/shock", {
-    method: "GET",
-  });
+  const response = await fetch(
+    `http://${window.location.host}:8000/api/shock`,
+    {
+      method: "GET",
+    }
+  );
   const data = await response.json();
   return data as ShockState;
 });
@@ -27,7 +30,7 @@ watch(
     if (timeout) return;
     timeout = setTimeout(() => {
       timeout = null;
-      fetch("http://localhost:8000/api/shock", {
+      fetch(`http://${window.location.host}:8000/api/shock`, {
         method: "POST",
         body: JSON.stringify({ ...shockState.value }),
         headers: {
