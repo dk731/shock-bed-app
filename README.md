@@ -1,3 +1,6 @@
+# Run flash
+- `flask run --host=0.0.0.0 --port=8000`
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
