@@ -87,7 +87,7 @@ onMounted(() => {
 
     <div class="flex flex-col content-center">
       <q-btn
-        v-if="shockState.state"
+        v-if="!shockState.state"
         class="!bg-primary !text-primary-content"
         @click="toggleShocking"
       >
