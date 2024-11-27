@@ -22,20 +22,29 @@ watch(
 );
 
 let timeout: NodeJS.Timeout | null = null;
+const isUpdating = ref(false);
 watch(
   () => ({ ...shockState.value }),
   () => {
     if (timeout) return;
-    timeout = setTimeout(() => {
+    timeout = setTimeout(async () => {
       timeout = null;
-      fetch(`http://${url.hostname}:8000/api/shock`, {
-        method: "POST",
-        body: JSON.stringify({ ...shockState.value }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    }, 200);
+
+      isUpdating.value = true;
+      try {
+        await fetch(`http://${url.hostname}:8000/api/shock`, {
+          method: "POST",
+          body: JSON.stringify({ ...shockState.value }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      isUpdating.value = false;
+    }, 300);
   }
 );
 
@@ -49,57 +58,51 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col p-10 !bg-base-100">
-    <div class="flex flex-col content-center">
-      <div>
-        Shock Voltage: {{ Math.round((shockState.voltage || 0) * 100) }} %
-      </div>
-      <q-slider
-        v-model="shockState.voltage"
-        :min="0"
-        :max="1"
-        :step="0.05"
-        class="mb-4 max-w-80"
-      />
+  <div class="w-full h-full flex flex-col !bg-base-100 p-10 px-[20%]">
+    <div>
+      Shock Voltage: {{ Math.round((shockState.voltage || 0) * 100) }} %
     </div>
-    <div class="flex flex-col content-center">
-      <div>Shock Frequency: {{ shockState.frequency }} Hz</div>
-      <q-slider
-        v-model="shockState.frequency"
-        :min="0"
-        :max="10000"
-        :step="10"
-        class="mb-4 max-w-80"
-      />
-    </div>
-    <div class="flex flex-col content-center">
-      <div>
-        Shock Duty: {{ Math.round((shockState.dutyCycle || 0) * 100) }} %
-      </div>
-      <q-slider
-        v-model="shockState.dutyCycle"
-        :min="0"
-        :max="1"
-        :step="0.1"
-        class="mb-4 max-w-80"
-      />
-    </div>
+    <q-slider
+      v-model="shockState.voltage"
+      :min="0"
+      :max="1"
+      :step="0.05"
+      class="mb-4"
+    />
 
-    <div class="flex flex-col content-center">
-      <q-btn
-        v-if="!shockState.state"
-        class="!bg-primary !text-primary-content"
-        @click="toggleShocking"
-      >
-        <icon name="mdi:electricity" size="20" /> Enable Shock
-      </q-btn>
-      <q-btn
-        v-else
-        class="!bg-primary !text-primary-content"
-        @click="toggleShocking"
-      >
-        Disable Shock
-      </q-btn>
-    </div>
+    <div>Shock Frequency: {{ shockState.frequency }} Hz</div>
+    <q-slider
+      v-model="shockState.frequency"
+      :min="0"
+      :max="500"
+      :step="1"
+      class="mb-4"
+    />
+
+    <div>Shock Duty: {{ Math.round((shockState.dutyCycle || 0) * 100) }} %</div>
+    <q-slider
+      v-model="shockState.dutyCycle"
+      :min="0"
+      :max="1"
+      :step="0.1"
+      class="mb-4"
+    />
+
+    <q-btn
+      v-if="!shockState.state"
+      class="!bg-primary !text-primary-content mb-8"
+      @click="toggleShocking"
+    >
+      <icon name="mdi:electricity" size="20" /> Enable Shock
+    </q-btn>
+    <q-btn
+      v-else
+      class="!bg-primary !text-primary-content mb-8"
+      @click="toggleShocking"
+    >
+      Disable Shock
+    </q-btn>
+
+    <q-linear-progress v-if="isUpdating" query />
   </div>
 </template>
