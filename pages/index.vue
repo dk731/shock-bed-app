@@ -68,7 +68,7 @@ onMounted(() => {
         v-model="shockState.frequency"
         :min="0"
         :max="10000"
-        :step="1"
+        :step="10"
         class="mb-4 max-w-80"
       />
     </div>
