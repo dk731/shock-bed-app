@@ -25,7 +25,6 @@ let timeout: NodeJS.Timeout | null = null;
 watch(
   () => ({ ...shockState.value }),
   () => {
-    console.log("WTR");
     if (timeout) return;
     timeout = setTimeout(() => {
       timeout = null;
@@ -68,7 +67,7 @@ onMounted(() => {
       <q-slider
         v-model="shockState.frequency"
         :min="0"
-        :max="100000"
+        :max="10000"
         :step="1"
         class="mb-4 max-w-80"
       />

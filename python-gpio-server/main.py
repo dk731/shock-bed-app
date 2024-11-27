@@ -62,13 +62,13 @@ def api_data():
     data = request.get_json()
     new_state = ShockState(**data)
 
-    if new_state.voltage:
+    if new_state.voltage is not None:
         shock_state.voltage = new_state.voltage
-    if new_state.state:
+    if new_state.state is not None:
         shock_state.state = new_state.state
-    if new_state.frequency:
+    if new_state.frequency is not None:
         shock_state.frequency = new_state.frequency
-    if new_state.dutyCycle:
+    if new_state.dutyCycle is not None:
         shock_state.dutyCycle = new_state.dutyCycle
 
     if new_state.frequency or new_state.dutyCycle or new_state.state:
