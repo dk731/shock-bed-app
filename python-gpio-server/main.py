@@ -31,24 +31,23 @@ shock_state.frequency = 1000
 shock_state.dutyCycle = 0.5
 shock_state.voltage = 0.0
 
-# pwm = gpiozero.PWMLED(
-#     PWM_PIN,
-#     frequency=shock_state.frequency,
-#     initial_value=0.0,
-# )
-# pwm.off()
-# pwm.value = shock_state.dutyCycle
+pwm = gpiozero.PWMLED(
+    PWM_PIN,
+    frequency=shock_state.frequency,
+    initial_value=0.0,
+)
+pwm.off()
+pwm.value = shock_state.dutyCycle
 
 
 def update_pwm():
-    print("Updating PWM")
-    print(shock_state)
-    # pwm.frequency = shock_state.frequency
-    # pwm.value = shock_state.dutyCycle
-    # if shock_state.state:
-    #     pwm.on()
-    # else:
-    #     pwm.off()
+    print("Updating PWM: ", shock_state)
+    pwm.frequency = shock_state.frequency
+    pwm.value = shock_state.dutyCycle
+    if shock_state.state:
+        pwm.on()
+    else:
+        pwm.off()
 
 
 @app.route("/api/shock", methods=["GET"])
